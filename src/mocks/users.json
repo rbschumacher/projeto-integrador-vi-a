@@ -1,0 +1,18 @@
+[
+  {
+    "id": 1,
+    "cpf": "0926374856",
+    "password": "1234",
+    "nome": "Rafael",
+    "last_name": "Schumacher",
+    "role": "customer"
+  },
+  {
+    "id": 2,
+    "cpf": "28374659820",
+    "password": "@asdasdas",
+    "nome": "Luca",
+    "last_name": "Safons",
+    "role": "kitchen"
+  }
+]

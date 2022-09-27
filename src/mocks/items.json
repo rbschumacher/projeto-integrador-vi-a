@@ -1,0 +1,17 @@
+[
+  {
+    "id": 1,
+    "price": 35,
+    "name": "Pizza de calabresa"
+  },
+  {
+    "id": 2,
+    "price": 20,
+    "name": "Hamburguer"
+  },
+  {
+    "id": 3,
+    "price": 15,
+    "name": "Tiramisu"
+  }
+]
