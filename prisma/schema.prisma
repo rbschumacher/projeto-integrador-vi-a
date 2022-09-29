@@ -17,3 +17,24 @@ model User {
   password String
   role String
 }
+
+model Item {
+  id    Int     @default(autoincrement()) @id 
+  price  Int
+  name String  @db.VarChar(255)
+  order Order? @relation(fields: [orderId], references: [id])
+  orderId Int?
+}
+
+model Order {
+  id    Int     @default(autoincrement()) @id
+  items Item[] 
+  price Int    
+  status OrderStatus @default(WAITING_PAYMENT)
+}
+
+enum OrderStatus {
+  FINISHED
+  WAITING_PAYMENT
+  PREPARING
+}

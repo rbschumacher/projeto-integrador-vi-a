@@ -1,34 +1,28 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import { Body, Controller, Get, Param, Post, Query } from '@nestjs/common';
+import { Order } from '@prisma/client';
 import { OrdersService } from './orders.service';
-import { CreateOrderDto } from './dto/create-order.dto';
-import { UpdateOrderDto } from './dto/update-order.dto';
 
 @Controller('orders')
 export class OrdersController {
   constructor(private readonly ordersService: OrdersService) {}
 
   @Post()
-  create(@Body() createOrderDto: CreateOrderDto) {
-    return this.ordersService.create(createOrderDto);
+  async newOrder(@Body() orderDto: { items: number[] }) {
+    return this.ordersService.newOrder(orderDto);
   }
 
   @Get()
-  findAll() {
-    return this.ordersService.findAll();
+  listOrders(@Query() params: Pick<Order, 'status'>) {
+    return this.ordersService.listOrders(params);
   }
 
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.ordersService.findOne(+id);
+  @Post('pay/:id')
+  payOrder(@Param('id') id: string) {
+    return this.ordersService.payOrder(id);
   }
 
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updateOrderDto: UpdateOrderDto) {
-    return this.ordersService.update(+id, updateOrderDto);
-  }
-
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.ordersService.remove(+id);
+  @Post('finish/:id')
+  finishOrder(@Param('id') id: string) {
+    return this.ordersService.finishOrder(id);
   }
 }

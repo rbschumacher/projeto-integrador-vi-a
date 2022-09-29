@@ -1,46 +1,33 @@
-import { Injectable } from '@nestjs/common';
-import { User, Prisma } from '@prisma/client';
+import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
+import { User } from '@prisma/client';
 
-import { CreateUserDto } from './dto/create-user.dto';
-import { UpdateUserDto } from './dto/update-user.dto';
 import { PrismaService } from '../prisma.service';
 
 @Injectable()
 export class UsersService {
   constructor(private prisma: PrismaService) {}
 
-  create(createUserDto: CreateUserDto) {
-    return createUserDto;
-  }
-
-  findAll(params: {
-    skip?: number;
-    take?: number;
-    cursor?: Prisma.UserWhereUniqueInput;
-    where?: Prisma.UserWhereInput;
-    orderBy?: Prisma.UserOrderByWithRelationInput;
-  }): Promise<User[]> {
-    const { skip, take, cursor, where, orderBy } = params;
-    return this.prisma.user.findMany({
-      skip,
-      take,
-      cursor,
-      where,
-      orderBy,
+  async login(loginData: {
+    cpf: string;
+    password: string;
+  }): Promise<Omit<User, 'password'>> {
+    const { cpf, password } = loginData;
+    const user = await this.prisma.user.findUnique({
+      where: {
+        cpf,
+      },
     });
-  }
 
-  findOne(id: number) {
-    return `This action returns a #${id} userasdasds`;
-  }
+    if (user.password === password) {
+      return {
+        id: user.id,
+        cpf: user.cpf,
+        first_name: user.first_name,
+        last_name: user.last_name,
+        role: user.role,
+      };
+    }
 
-  update(id: number, updateUserDto: UpdateUserDto) {
-    return `This action updates a #${id} usersdasdasd ${JSON.stringify(
-      updateUserDto,
-    )}`;
-  }
-
-  remove(id: number) {
-    return `This action removes a #${id} userasdasd`;
+    throw new HttpException('Forbidden', HttpStatus.FORBIDDEN);
   }
 }
