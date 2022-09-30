@@ -12,6 +12,11 @@ export class UsersService {
     password: string;
   }): Promise<Omit<User, 'password'>> {
     const { cpf, password } = loginData;
+
+    // if (!cpf || !password) {
+    //   throw new HttpException('Bad Request', HttpStatus.BAD_REQUEST);
+    // }
+
     const user = await this.prisma.user.findUnique({
       where: {
         cpf,
