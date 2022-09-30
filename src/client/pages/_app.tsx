@@ -4,6 +4,7 @@ import { useEffect } from 'react';
 import { useRouter } from 'next/router';
 
 import { CLIENT_ROUTES, KITCHEN_ROUTES } from '../constants/routes';
+import { OrderProvider } from '../context/order-context';
 
 function MyApp({ Component, pageProps }: AppProps) {
   const router = useRouter();
@@ -18,7 +19,11 @@ function MyApp({ Component, pageProps }: AppProps) {
     if (user?.role === 'client') router.push(CLIENT_ROUTES.ORDER);
   }, []);
 
-  return <Component {...pageProps} />;
+  return (
+    <OrderProvider>
+      <Component {...pageProps} />
+    </OrderProvider>
+  );
 }
 
 export default MyApp;

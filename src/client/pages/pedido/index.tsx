@@ -2,10 +2,21 @@ import React, { useEffect, useState } from 'react';
 import { NextPage } from 'next';
 import { useRouter } from 'next/router';
 
+import { useOrder } from '../../context/order-context';
+
 const Pedido: NextPage = () => {
   const [items, setItems] = useState([]);
-  const [order, setOrder] = useState([]);
+  const [cart, setCart] = useState([]);
+
+  const addToCart = (item) => {
+    if (cart.find((orderItem) => orderItem.id === item.id)) return;
+
+    setCart((currCart) => [...currCart, item]);
+  };
+
   const router = useRouter();
+
+  const { setOrder } = useOrder();
 
   useEffect(() => {
     const fetchItems = async () => {
@@ -18,18 +29,17 @@ const Pedido: NextPage = () => {
     fetchItems();
   }, []);
 
-  const addItemToCart = (item) => {
-    setOrder((currOrder) => [...currOrder, item]);
-  };
-
   const placeOrder = async () => {
-    await fetch('/orders', {
+    const res = await fetch('/orders', {
       method: 'POST',
-      body: JSON.stringify({ items: order.map((orderItem) => orderItem.id) }),
+      body: JSON.stringify({ items: cart.map((orderItem) => orderItem.id) }),
       headers: {
         'Content-type': 'application/json; charset=UTF-8',
       },
     });
+
+    const data = await res.json();
+    setOrder(data);
 
     router.push('pedido/pagamento');
   };
@@ -50,7 +60,7 @@ const Pedido: NextPage = () => {
               <span className="text-3xl font-bold">R$ {item.price}</span>
               <button
                 className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
-                onClick={() => addItemToCart(item)}
+                onClick={() => addToCart(item)}
               >
                 Pedir
               </button>
@@ -59,11 +69,11 @@ const Pedido: NextPage = () => {
         </div>
       ))}
 
-      {!!order.length && (
+      {!!cart.length && (
         <div className="flex flex-col items-start mt-12">
           <h3 className="text-xl font-bold mb-2">Carrinho:</h3>
           <div>
-            {order.map((item) => (
+            {cart.map((item) => (
               <div className="flex justify-between">
                 <span className="text-md mr-8">{item.name}</span>
                 <span className="text-md font-bold">R$ {item.price}</span>
@@ -73,7 +83,7 @@ const Pedido: NextPage = () => {
             <div className="flex justify-between my-4">
               <span className="text-xl">Total:</span>
               <span className="text-xl font-bold">
-                R$ {order.reduce((acc, curr) => acc + curr.price, 0)}
+                R$ {cart.reduce((acc, curr) => acc + curr.price, 0)}
               </span>
             </div>
           </div>

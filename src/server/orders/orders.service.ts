@@ -24,6 +24,9 @@ export class OrdersService {
         price: orderPrice,
         status: 'WAITING_PAYMENT',
       },
+      include: {
+        items: true,
+      },
     });
   }
 
