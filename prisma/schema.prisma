@@ -22,8 +22,7 @@ model Item {
   id    Int     @default(autoincrement()) @id 
   price  Int
   name String  @db.VarChar(255)
-  order Order? @relation(fields: [orderId], references: [id])
-  orderId Int?
+  order Order[]
 }
 
 model Order {

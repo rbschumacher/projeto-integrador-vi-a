@@ -32,6 +32,9 @@ export class OrdersService {
       where: {
         status: filter.status,
       },
+      include: {
+        items: true,
+      },
     });
   }
 
